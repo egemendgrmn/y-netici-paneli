@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel | Yüksek Güvenlikli Yönetim Paneli</title>
+    <!-- İkonlar -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap" rel="stylesheet">
+    <!-- CSS Dosyası Bağlantısı -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <i class="fas fa-shield-halved"></i> SENTINEL
+        </div>
+        
+        <div class="menu">
+            <div class="menu-title">Yönetim</div>
+            <div class="menu-item active" onclick="showSection('dashboard', this)">
+                <i class="fas fa-layer-group"></i> <span>Genel Bakış</span>
+            </div>
+            <div class="menu-item" onclick="showSection('personnel', this)">
+                <i class="fas fa-user-tie"></i> <span>Personel Listesi</span>
+            </div>
+            
+            <div class="menu-title" style="margin-top: 20px;">Güvenlik</div>
+            <div class="menu-item" onclick="showSection('applications', this)">
+                <i class="fas fa-file-contract"></i> <span>Gizli Başvurular</span>
+            </div>
+            <div class="menu-item" onclick="showSection('lan', this)">
+                <i class="fas fa-network-wired"></i> <span>Ağ Yönetimi (LAN)</span>
+            </div>
+
+            <div class="menu-title" style="margin-top: 20px;">Araçlar</div>
+            <div class="menu-item" onclick="showSection('notes', this)">
+                <i class="fas fa-clock"></i> <span>Görevler & Notlar</span>
+            </div>
+            <div class="menu-item" onclick="toggleTerminal(true)">
+                <i class="fas fa-terminal"></i> <span>Sistem Terminali</span>
+            </div>
+            
+            <div class="menu-title" style="margin-top: 20px;">Tatbikatlar</div>
+            <!-- TALİMATLAR DOSYASI -->
+            <div class="menu-item" onclick="showInstructions()">
+                <i class="far fa-file-alt"></i> <span>Yapılması Gerekenler.txt</span>
+            </div>
+
+            <div class="menu-item pulse-effect" onclick="startSimulation()">
+                <i class="fas fa-skull-crossbones"></i> <span>Dış Saldırı Sim.</span>
+            </div>
+            <div class="menu-item insider-effect" onclick="startInsiderSimulation()">
+                <i class="fas fa-user-secret"></i> <span>İç Tehdit Sim.</span>
+            </div>
+        </div>
+
+        <div class="user-panel">
+            <div class="user-avatar">AD</div>
+            <div>
+                <div style="font-size: 0.9rem; font-weight: 600; color: white;">Admin</div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">Süper Yetkili</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        
+        <div id="notificationBanner" class="notification-banner">
+            <div style="display:flex; align-items:center;">
+                <i class="fas fa-exclamation-triangle" style="font-size: 1.2rem; margin-right: 15px;"></i>
+                <div>
+                    <div style="font-weight: 700;" id="notifTitle">Bildirim</div>
+                    <div id="notifText" style="font-size: 0.9rem; opacity: 0.9;">İçerik...</div>
+                </div>
+            </div>
+            <button onclick="closeBanner()" style="background:none; border:none; color:white; cursor:pointer;"><i class="fas fa-times" style="font-size: 1.2rem;"></i></button>
+        </div>
+
+        <div class="top-bar">
+            <h2 id="page-title" class="page-title">Genel Bakış</h2>
+            <div class="system-status">
+                <div id="clock">00:00:00</div>
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <div class="live-dot" id="system-dot"></div> <span id="system-text">Sistem Aktif</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-area">
+
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="section">
+                <div class="stats-grid">
+                    <div class="card">
+                        <div>
+                            <div class="card-val" id="stat-personnel">124</div>
+                            <div class="card-label">Toplam Personel</div>
+                        </div>
+                        <div class="card-icon-box"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="card">
+                        <div>
+                            <div class="card-val" id="stat-uptime">99.9%</div>
+                            <div class="card-label">Sistem Uptime</div>
+                        </div>
+                        <div class="card-icon-box" style="color:var(--success); background:rgba(16,185,129,0.1);"><i class="fas fa-server"></i></div>
+                    </div>
+                    <div class="card">
+                        <div>
+                            <div class="card-val" id="stat-lan">14</div>
+                            <div class="card-label">Aktif LAN Cihazı</div>
+                        </div>
+                        <div class="card-icon-box" style="color:var(--warning); background:rgba(245,158,11,0.1);"><i class="fas fa-wifi"></i></div>
+                    </div>
+                    <div class="card">
+                        <div>
+                            <div class="card-val" id="stat-budget">₺845,000</div>
+                            <div class="card-label">Aylık Bütçe</div>
+                        </div>
+                        <div class="card-icon-box" style="color:var(--danger); background:rgba(239,68,68,0.1);"><i class="fas fa-wallet"></i></div>
+                    </div>
+                </div>
+
+                <div class="panel-container">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-list-ul"></i> Son Sistem Logları</h3>
+                        <button class="btn btn-sm btn-primary">Canlı Akış</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Zaman</th>
+                                <th>Olay</th>
+                                <th>Kullanıcı</th>
+                                <th>Durum</th>
+                            </tr>
+                        </thead>
+                        <tbody id="log-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Diğer Sayfalar -->
+            <div id="personnel" class="section" style="display: none;">
+                <div class="panel-container">
+                    <div class="panel-header">
+                        <h3>Kurum Personel Listesi</h3>
+                        <button class="btn btn-sm btn-primary" onclick="showAlert('Yetki Hatası', 'Demo modunda yeni personel eklenemez.')"><i class="fas fa-plus"></i> Personel Ekle</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ad Soyad</th>
+                                <th>Departman</th>
+                                <th>Maaş</th>
+                                <th>Perf. Puanı</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personnel-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="applications" class="section" style="display: none; position: relative; min-height: 500px;">
+                <div id="security-lock" class="locked-overlay">
+                    <div style="text-align:center;">
+                        <i class="fas fa-lock" style="font-size: 5rem; color: #ef4444; margin-bottom: 20px;"></i>
+                        <h2 style="font-size: 2rem; margin-bottom: 10px;">Çok Gizli Alan</h2>
+                        <input type="password" id="admin-pass" class="lock-input" placeholder="Şifre Giriniz">
+                        <br>
+                        <button onclick="unlockSecuredArea()" class="btn btn-primary" style="margin-top: 20px; width: 200px;"><i class="fas fa-key"></i> Erişimi Aç</button>
+                        <p id="auth-error" style="color: #ef4444; margin-top: 15px; display: none; font-weight:bold;"><i class="fas fa-exclamation-triangle"></i> Erişim Reddedildi</p>
+                    </div>
+                </div>
+                <div id="secured-content" style="filter: blur(15px); pointer-events: none; transition: all 0.5s;">
+                    <div class="panel-container">
+                        <div class="panel-header" style="background: #fee2e2;">
+                            <h3 style="color: #b91c1c;"><i class="fas fa-user-secret"></i> Bekleyen Gizli CV'ler</h3>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr><th>Aday İsmi</th><th>Başvuru Pozisyonu</th><th>Deneyim</th><th>Güvenlik Puanı</th><th>Karar İşlemi</th></tr>
+                            </thead>
+                            <tbody id="applications-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="lan" class="section" style="display: none;">
+                <div class="panel-container">
+                    <div class="panel-header">
+                        <h3><i class="fas fa-network-wired"></i> Yerel Ağ (LAN) Cihazları</h3>
+                        <div>
+                            <button id="scan-btn" class="btn btn-sm btn-warning" onclick="scanNetwork()"><i class="fas fa-bug"></i> Tara</button>
+                            <button class="btn btn-sm btn-primary" onclick="renderLan()"><i class="fas fa-sync"></i> Yenile</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr><th>Cihaz / Hostname</th><th>IP Adresi</th><th>MAC Adresi</th><th>Ping</th><th>Durum</th><th>Müdahale</th></tr>
+                        </thead>
+                        <tbody id="lan-list"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="notes" class="section" style="display: none;">
+                <div class="panel-container" style="padding: 24px; margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px;">Yeni Hatırlatıcı Oluştur</h3>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <input type="text" id="note-input" placeholder="Notunuzu buraya girin..." style="flex: 2; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                        <input type="datetime-local" id="note-time" style="flex: 1; padding: 12px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                        <button onclick="addNote()" class="btn btn-success"><i class="fas fa-plus-circle"></i> Ekle & Alarm Kur</button>
+                    </div>
+                </div>
+                <div id="notes-list" class="notes-grid"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- STANDART MODAL -->
+    <div id="custom-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modal-title">Başlık</h3>
+            <p id="modal-message">Mesaj burada olacak.</p>
+            <div id="modal-input-container" style="display:none;">
+                <input type="text" id="modal-input" class="modal-input" placeholder="Değer giriniz...">
+            </div>
+            <div class="modal-buttons">
+                <button id="modal-cancel" class="btn btn-danger">İptal</button>
+                <button id="modal-confirm" class="btn btn-primary">Tamam</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TALİMATLAR MODALI -->
+    <div id="instructions-modal" class="modal-overlay">
+        <div class="modal-content instruction-modal">
+            <h3 style="color:var(--primary);"><i class="far fa-file-alt"></i> Yapılması Gerekenler.txt</h3>
+            <div class="instruction-content">
+=== SENTINEL GÜVENLİK PROTOKOLLERİ ===
+
+[SENARYO 1: DIŞ SALDIRI (Kırmızı Alarm)]
+Belirti: Sistem verileri bozulur, ekran kırmızı yanıp söner.
+Çözüm:
+1. Terminali açın.
+2. 'scan_threat' komutuyla saldırganın IP adresini bulun.
+3. 'firewall block [IP_ADRESI]' komutuyla engelleme yapın.
+   (Örn: firewall block 192.168.5.5)
+
+[SENARYO 2: İÇ TEHDİT (Turuncu Alarm)]
+Belirti: Bütçe hızla azalır, ekran turuncu yanıp söner.
+Çözüm:
+1. Terminali açın.
+2. 'audit_logs' komutunu yazıp şüpheli personeli bulun.
+   (İpucu: "YÜKSEK HACİMLİ TRANSFER" uyarısını arayın)
+3. 'suspend_user [AD SOYAD]' komutuyla hesabı dondurun.
+   (Örn: suspend_user Ali Veli)
+
+[UYARI]
+Bütçe 0 TL'ye düşerse sistem iflas eder ve kilitlenir!
+Otomatik yeniden başlatma 25 saniye sürer.
+            </div>
+            <div class="modal-buttons" style="justify-content: flex-end;">
+                <button onclick="document.getElementById('instructions-modal').style.display='none'" class="btn btn-primary">Kapat</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOCKDOWN OVERLAY -->
+    <div id="lockdown-overlay" class="lockdown-overlay">
+        <i class="fas fa-radiation fa-spin" style="font-size: 5rem; margin-bottom: 20px;"></i>
+        <div class="lockdown-text">SİSTEM KİLİTLENDİ</div>
+        <div class="lockdown-text" style="font-size: 2rem; margin-top:10px;">KRİTİK FİNANSAL HATA</div>
+        <div class="lockdown-sub">Tüm varlıklar tüketildi. Sistem kurtarma başlatılıyor...</div>
+        <div class="restart-timer" id="restart-timer">25</div>
+    </div>
+
+    <!-- TERMINAL PENCERESİ -->
+    <div id="terminal" class="terminal-window">
+        <div class="terminal-header">
+            <span><i class="fas fa-terminal"></i> SENTINEL SECURE SHELL</span>
+            <span style="cursor:pointer;" onclick="toggleTerminal(false)">X</span>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+            <div class="log-entry">Sentinel OS v2.4 başlatılıyor...</div>
+            <div class="log-entry">Bağlantı kuruldu.</div>
+            <div class="log-entry log-info">Mevcut komutları görmek için 'help' yazın.</div>
+        </div>
+        <div class="terminal-input-line">
+            <span class="prompt-char">admin@sentinel:~$</span>
+            <input type="text" id="terminal-input" autocomplete="off" placeholder="Komut giriniz...">
+        </div>
+    </div>
+
+    <!-- JavaScript Dosyası Bağlantısı -->
+    <script src="script.js"></script>
+</body>
+</html>
